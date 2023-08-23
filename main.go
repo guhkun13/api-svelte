@@ -10,7 +10,6 @@ import (
 var msgChan chan string
 
 func sendTime(w http.ResponseWriter) {
-	fmt.Println("send time here!")
 	for {
 		time.Sleep(time.Second * 1)
 		msg := time.Now().Format("15:04:05")
@@ -41,7 +40,7 @@ func sseHandler(w http.ResponseWriter, r *http.Request) {
 	for {
 		select {
 		case msg := <-msgChan:
-			fmt.Println(msg)
+			fmt.Println("time: ", msg)
 			fmt.Fprintf(w, "data: %s\n\n", msg)
 			flusher.Flush()
 		case <-r.Context().Done():
@@ -51,10 +50,16 @@ func sseHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func hiHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Write([]byte("Hello World!"))
+}
+
 func main() {
 	router := http.NewServeMux()
 	router.HandleFunc("/event", sseHandler)
+	router.HandleFunc("/hi", hiHandler)
 
-	fmt.Println("running server on port 3123!")
-	log.Fatal(http.ListenAndServe("localhost:3123", router))
+	fmt.Println("server running on port 8010!")
+	log.Fatal(http.ListenAndServe(":8010", router))
 }
