@@ -24,11 +24,12 @@ jobs:
           tags: guhkun13/api-svelte:latest
 
   deploy:
+    needs: build
     runs-on: ubuntu-latest
     
     steps:
       - name: Redeploy image
         uses: distributhor/workflow-webhook@v3
-        env:
+        with:
           webhook_url: ${{secrets.WEBHOOK_URL}}
           webhook_secret: ""
