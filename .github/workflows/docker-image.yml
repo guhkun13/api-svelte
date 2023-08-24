@@ -30,6 +30,6 @@ jobs:
     steps:
       - name: Redeploy image
         uses: distributhor/workflow-webhook@v3
-        with:
+        env:
           webhook_url: ${{secrets.WEBHOOK_URL}}
           webhook_secret: ""
