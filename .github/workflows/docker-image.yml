@@ -2,28 +2,33 @@ name: Docker Image CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
-
-  docker:
-
+  build:
     runs-on: ubuntu-latest
 
     steps:
-      - 
-        name: Checkout
+      - name: Checkout
         uses: actions/checkout@v3
-      -
-        name: Login to Docker Hub
+      - name: Login to Docker Hub
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}     
-      -
-        name: Build and push
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Build and push
         uses: docker/build-push-action@v4
         with:
           context: .
           push: true
           tags: guhkun13/api-svelte:latest
+
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Redeploy image
+        uses: distributhor/workflow-webhook
+        with:
+          webhook_url: ${{secrets.WEBHOOK_URL}}
+          webhook_secret: ""
